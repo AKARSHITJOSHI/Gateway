@@ -6,6 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class GatewayFilterIT {
 
@@ -16,13 +18,12 @@ public class GatewayFilterIT {
     @Test
     void test_cacheFilter(){
         webTestClient.get()
-                .uri("/some-path?key=testKey")
+                .uri("/cache?key=testKey")
                 .header(HttpHeaders.HOST, "localhost")
                 .exchange()
                 .expectStatus().isOk()
-                .expectHeader().exists("X-Your-Custom-Header")
                 .expectBody(String.class).consumeWith(response -> {
-                    // Additional assertions on response body or headers
+                    assertTrue((response.getResponseBody()).contains("testKey"));
                 });
     }
 }
