@@ -79,6 +79,80 @@
 		</dependencies>
 	</dependencyManagement>
 
+	<!-- Maven profiles with OS activation to conditionally include dependencies based on the platform.-->
+
+	<!--
+	- The proper profile activates based on current OS name and architecture.
+
+    - Only the matching dependency with the correct classifier and native library is included.
+
+    - You can then run Maven normally; it picks the correct dependency automatically.
+-->
+
+	<profiles>
+		<profile>
+			<id>macos-x86_64</id>
+			<activation>
+				<os>
+					<name>Mac OS X</name>
+					<arch>x86_64</arch>
+				</os>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>io.netty</groupId>
+					<artifactId>netty-resolver-dns-native-macos</artifactId>
+					<version>4.1.85.Final</version>
+					<classifier>osx-x86_64</classifier>
+					<scope>runtime</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>macos-aarch64</id>
+			<activation>
+				<os>
+					<name>Mac OS X</name>
+					<arch>aarch64</arch>
+				</os>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>io.netty</groupId>
+					<artifactId>netty-resolver-dns-native-macos</artifactId>
+					<version>4.1.85.Final</version>
+					<classifier>osx-aarch_64</classifier>
+					<scope>runtime</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>linux-x86_64</id>
+			<activation>
+				<os>
+					<name>Linux</name>
+					<arch>x86_64</arch>
+				</os>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>io.netty</groupId>
+					<artifactId>netty-resolver-dns-native-macos</artifactId>
+					<version>4.1.85.Final</version>
+					<classifier>linux-x86_64</classifier>
+					<scope>runtime</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<!-- Add more profiles for Windows or other platforms if needed -->
+	</profiles>
+
+
+
+
 	<build>
 		<plugins>
 			<plugin>
