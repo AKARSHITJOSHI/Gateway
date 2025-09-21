@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: cache-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: cache_route
+          uri: http://placeholder   # replaced dynamically
+          predicates:
+            - Path=/cache/**
