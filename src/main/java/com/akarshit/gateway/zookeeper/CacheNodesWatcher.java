@@ -85,12 +85,26 @@ public class CacheNodesWatcher implements Watcher {
 
     @Override
     public void process(WatchedEvent event) {
-        if (event.getType() == Event.EventType.NodeChildrenChanged) {
-            try {
-                startWatching(); // re-register watch
-            } catch (Exception e) {
-                e.printStackTrace();
+        log.debug("ZK watcher fired: state={}, type={}, path={}", event.getState(), event.getType(), event.getPath());
+
+        // handle connection/session events
+        if (event.getType() == Event.EventType.None) {
+            if (event.getState() == Event.KeeperState.Expired) {
+                log.warn("ZooKeeper session expired. Need to recreate client and re-register watches.");
+            } else if (event.getState() == Event.KeeperState.SyncConnected) {
+                log.info("ZooKeeper connected.");
             }
+            return;
+        }
+
+        if (event.getType() == Event.EventType.NodeChildrenChanged && NODE_PATH.equals(event.getPath())) {
+            executor.submit(() -> {
+                try {
+                    watchNodes();
+                } catch (Exception e) {
+                    log.error("Error while handling NodeChildrenChanged for " + NODE_PATH, e);
+                }
+            });
         }
     }
 }
