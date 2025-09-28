@@ -14,6 +14,6 @@ public class StartupEventListener {
     @EventListener(ApplicationReadyEvent.class)
     public void onStartup() throws Exception {
         log.info("Start watching nodes");
-        watcher.watchNodes();
+        watcher.startWatching();
     }
 }
