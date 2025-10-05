@@ -1,6 +1,6 @@
 package com.akarshit.gateway.filter;
 
-import com.akarshit.gateway.zookeeper.CacheNodesWatcher;
+import com.akarshit.gateway.zookeeper.ZkWatcher;
 import lombok.SneakyThrows;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
@@ -19,7 +19,7 @@ class ConsistentHashFilterIT {
     ZooKeeper zooKeeper;
 
     @Autowired
-    CacheNodesWatcher watcher;
+    ZkWatcher watcher;
 
 
     @Test
@@ -37,23 +37,4 @@ class ConsistentHashFilterIT {
         });
     }
 
-//    @Test
-//    public void filterTest() {
-//        ConsistentHashRouter router = mock(ConsistentHashRouter.class);
-//        ConsistentHashFilter filter = new ConsistentHashFilter(router);
-//
-//        ServerWebExchange exchange = mock(ServerWebExchange.class);
-//        GatewayFilterChain chain = mock(GatewayFilterChain.class);
-//
-//
-//        // setup mocks for exchange methods etc.
-//
-//        when(chain.filter(exchange)).thenReturn(Mono.empty());
-//
-//        StepVerifier.create(filter.filter(exchange, chain))
-//                .expectComplete()
-//                .verify();
-//
-//        verify(chain, times(1)).filter(exchange);
-//    }
 }

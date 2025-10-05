@@ -1,6 +1,6 @@
 package com.akarshit.gateway.startup;
 
-import com.akarshit.gateway.zookeeper.CacheNodesWatcher;
+import com.akarshit.gateway.zookeeper.ZkWatcher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -8,7 +8,7 @@ import org.springframework.context.event.EventListener;
 @Slf4j
 public class StartupEventListener {
 
-    CacheNodesWatcher watcher;
+    ZkWatcher watcher;
 
     // Connect to zookeeper only when application is ready
     @EventListener(ApplicationReadyEvent.class)
