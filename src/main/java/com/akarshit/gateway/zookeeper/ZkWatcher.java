@@ -4,18 +4,29 @@ package com.akarshit.gateway.zookeeper;
 import com.akarshit.gateway.router.ConsistentHashRouter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.zookeeper.*;
+import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.KeeperException;
+import org.apache.zookeeper.WatchedEvent;
+import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.ZooDefs;
+import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
-import org.springframework.core.env.Environment;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Log4j2
 @Component
 @RequiredArgsConstructor
+@ConditionalOnProperty(
+        name = "zk.watcher.enabled",
+        havingValue = "true"
+)
 public class ZkWatcher implements Watcher {
 
     private static final String NODE_PATH = "/cache/nodes";
@@ -78,6 +89,7 @@ public class ZkWatcher implements Watcher {
 
     private void refreshRouterFromZk() {
         try {
+            log.info("Refreshing consistent hash ring .....");
             ensureParent(zk, NODE_PATH);
             List<String> children = zk.getChildren(NODE_PATH, this); // re-arm watcher
             List<String> nodeUrls = new ArrayList<>();
