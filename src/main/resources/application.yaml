@@ -1,10 +1,10 @@
 spring:
-  application:
-    name: cache-gateway
   cloud:
     gateway:
-      routes:
-        - id: cache_route
-          uri: http://placeholder   # replaced dynamically
-          predicates:
-            - Path=/cache/**
+      server:
+        webflux:
+          routes:
+            - id: cache-route
+              uri: http://localhost:8081
+              predicates:
+                - Path=/cache/**

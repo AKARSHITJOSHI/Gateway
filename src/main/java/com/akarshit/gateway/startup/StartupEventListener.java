@@ -1,19 +1,27 @@
 package com.akarshit.gateway.startup;
 
 import com.akarshit.gateway.zookeeper.ZkWatcher;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 
 @Slf4j
+@RequiredArgsConstructor
+@Component
 public class StartupEventListener {
 
-    ZkWatcher watcher;
+    private final ZkWatcher watcher;
 
     // Connect to zookeeper only when application is ready
     @EventListener(ApplicationReadyEvent.class)
-    public void onStartup() throws Exception {
-        log.info("Start watching nodes");
-        watcher.startWatching();
+    public void onStartup() {
+        try {
+            log.info("Start watching nodes");
+            watcher.startWatching();
+        } catch (Exception exp) {
+            log.error("Unable to watch zookeeper", exp);
+        }
     }
 }

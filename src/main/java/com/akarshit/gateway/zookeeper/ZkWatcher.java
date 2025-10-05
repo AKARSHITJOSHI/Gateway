@@ -20,12 +20,10 @@ public class ZkWatcher implements Watcher {
 
     private static final String NODE_PATH = "/cache/nodes";
     private final ZooKeeper zk;
-    private final Environment env;
-    private final ConsistentHashRouter router; // your consistent hashing router class
+    private final ConsistentHashRouter router;
 
     private final List<String> lastKnownNodes = new CopyOnWriteArrayList<>();
 
-    // --- STARTUP ---
 
     public void startWatching() {
         try {
@@ -38,11 +36,11 @@ public class ZkWatcher implements Watcher {
         }
     }
 
-    // --- EVENT HANDLER ---
 
     @Override
     public void process(WatchedEvent event) {
         try {
+            log.info("ZkWatcher.process()....");
             Event.EventType type = event.getType();
             Watcher.Event.KeeperState state = event.getState();
             String path = event.getPath();
@@ -77,8 +75,6 @@ public class ZkWatcher implements Watcher {
             log.error("Error handling ZooKeeper event", e);
         }
     }
-
-    // --- REFRESH ROUTER ---
 
     private void refreshRouterFromZk() {
         try {
@@ -120,27 +116,6 @@ public class ZkWatcher implements Watcher {
         }
     }
 
-    // --- REGISTER NODE ---
-
-    public void register() {
-        try {
-            ensureParent(zk, NODE_PATH);
-            String host = env.getProperty("server.address", "localhost");
-            String port = env.getProperty("local.server.port", "8080");
-            String payload = String.format("http://%s:%s", host, port);
-            String path = zk.create(
-                    NODE_PATH + "/node_",
-                    payload.getBytes(StandardCharsets.UTF_8),
-                    ZooDefs.Ids.OPEN_ACL_UNSAFE,
-                    CreateMode.EPHEMERAL_SEQUENTIAL
-            );
-            log.info("Registered cache node at {} -> {}", path, payload);
-        } catch (Exception e) {
-            log.error("Failed to register node", e);
-        }
-    }
-
-    // --- UTILITIES ---
 
     private void ensureParent(ZooKeeper zk, String path) {
         try {
